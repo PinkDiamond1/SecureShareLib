@@ -14,5 +14,8 @@
     <string name="sm_tor_host">1234</string>
     <string name="sm_tor_port">1234</string>
 
-
+	<string name="s3_key">foo</string>
+	<string name="s3_secret">foo</string>
+	<string name="s3_bucket">foo</string>
+	<string name="s3_path_prefix">foo</string>
 </resources>
