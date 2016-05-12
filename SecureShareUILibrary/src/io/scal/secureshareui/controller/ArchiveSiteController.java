@@ -148,6 +148,13 @@ public class ArchiveSiteController extends SiteController {
         if (licenseUrl != null) {
             builder.addHeader("x-archive-meta-licenseurl", licenseUrl);
         }
+
+		/*
+		For uploads which need to be available ASAP in the content
+  management system, an interactive user's upload for example,
+  one can request interactive queue priority:
+		 */
+		builder.addHeader("x-archive-interactive-priority","1");
 		
 		Request request = builder.build();
 

@@ -5,8 +5,10 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+
+    compileSdkVersion project.ext.compileSdkVersion
+    buildToolsVersion project.ext.buildToolsVersion
+    useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
         minSdkVersion 16
@@ -23,7 +25,7 @@ android {
     }
 
     dexOptions {
-        javaMaxHeapSize "4g"
+        javaMaxHeapSize "2g"
     }
 
     packagingOptions {
@@ -54,16 +56,19 @@ dependencies {
     compile 'com.google.android.gms:play-services:6.5.87'
     compile 'com.android.support:support-v4:21.0.3'
     compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'info.guardianproject.netcipher:netcipher:1.2.1'
 
     compile 'com.google.guava:guava:18.0'
-    compile 'org.apache.httpcomponents:httpcore:4.3.2'
+    compile files('libs/httpclientandroidlib-1.2.1.jar')
     compile 'org.apache.httpcomponents:httpmime:4.3.3'
-    compile files('libs/httpmime-4.3.3.jar')
+    compile 'org.apache.httpcomponents:httpcore:4.3.3'
+
+    //compile files('libs/httpmime-4.3.3.jar')
     compile files('libs/jsch-0.1.51.jar')
     compile files('libs/scribe.jar')
 
     compile 'com.squareup.okhttp:okhttp:2.1.0'
 
-    compile project(':external:SecureShareLib:SecureShareUILibrary:external:facebook-sdk:facebook')
+  //  compile project(':external:SecureShareLib:SecureShareUILibrary:external:facebook-sdk:facebook')
 
 }

@@ -1,7 +1,7 @@
 
 package io.scal.secureshareui.controller;
 
-import info.guardianproject.onionkit.ui.OrbotHelper;
+import info.guardianproject.netcipher.proxy.OrbotHelper;
 import io.scal.secureshareui.model.Account;
 import io.scal.secureshareuilibrary.R;
 
@@ -82,9 +82,8 @@ public abstract class SiteController {
     public abstract void upload(Account account, HashMap<String, String> valueMap);
 
     public static boolean torCheck(boolean useTor, Context mContext) {
-        OrbotHelper orbotHelper = new OrbotHelper(mContext);
 
-        if(useTor && orbotHelper.isOrbotRunning()) 
+        if(useTor && OrbotHelper.isOrbotRunning(mContext))
         {    
             Log.d(TAG, "use tor");
             return true;
@@ -97,10 +96,7 @@ public abstract class SiteController {
     }   
     
     public static SiteController getSiteController(String site, Context context, Handler handler, String jobId) {
-        if (site.equals(FacebookSiteController.SITE_KEY)) {
-            return new FacebookSiteController(context, handler, jobId);
-        }
-        else if (site.equals(SoundCloudSiteController.SITE_KEY)) {
+        if (site.equals(SoundCloudSiteController.SITE_KEY)) {
             return new SoundCloudSiteController(context, handler, jobId);
         }
         else if (site.equals(YoutubeSiteController.SITE_KEY)) {
@@ -193,14 +189,7 @@ public abstract class SiteController {
     }
     
     public static int getAccountIcon(String site, boolean isConnected, boolean areCredentialsValid) {
-        if (site.equals(FacebookSiteController.SITE_KEY)) {     	
-        	if (!isConnected) { //not connected
-        		return R.drawable.ic_context_facebook;
-        	}
-        	//since connected, check if valid
-        	return areCredentialsValid ? R.drawable.ic_context_facebook_on : R.drawable.ic_context_facebook_error;
-        }
-        else if (site.equals(YoutubeSiteController.SITE_KEY)) {
+        if (site.equals(YoutubeSiteController.SITE_KEY)) {
         	if (!isConnected) {
         		return R.drawable.ic_context_youtube;
         	}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Activities -->
+    <string name="flickr_key">1234</string>
+    <string name="flickr_secret">1234</string>
+
+    <string name="google_app_name">1234</string>
+    <string name="google_client_id">1234</string>
+    <string name="google_client_secret">1234</string>
+
+    <string name="sm_key">1234</string>
+    <string name="sm_secret">1234</string>
+    <string name="sm_tor_host">1234</string>
+    <string name="sm_tor_port">1234</string>
+
+
+</resources>

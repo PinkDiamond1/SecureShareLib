@@ -1,7 +1,7 @@
 package io.scal.secureshareui.login;
 
-import info.guardianproject.onionkit.ui.OrbotHelper;
-import info.guardianproject.onionkit.web.WebkitProxy;
+import info.guardianproject.netcipher.proxy.OrbotHelper;
+import info.guardianproject.netcipher.web.WebkitProxy;
 import io.scal.secureshareui.controller.SiteController;
 import io.scal.secureshareui.lib.Util;
 import io.scal.secureshareuilibrary.R;
@@ -13,7 +13,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -21,7 +20,10 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-public class ArchiveLoginActivity extends ActionBarActivity {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class ArchiveLoginActivity extends Activity {
 
 	private static final String TAG = "ArchiveLoginActivity";
 	
@@ -52,16 +54,21 @@ public class ArchiveLoginActivity extends ActionBarActivity {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         boolean useTor = settings.getBoolean("pusetor", false);
 
+
+		mWebview = (WebView) findViewById(R.id.webView);
+		mWebview.getSettings().setJavaScriptEnabled(true);
+		mWebview.setVisibility(View.VISIBLE);
+		mWebview.addJavascriptInterface(new JSInterface(), "htmlout");
+
         if (useTor) {
             Log.d(TAG, "user selected \"use tor\"");
 
-            OrbotHelper orbotHelper = new OrbotHelper(getApplicationContext());
-            if ((!orbotHelper.isOrbotInstalled()) || (!orbotHelper.isOrbotRunning())) {
+            if ((!OrbotHelper.isOrbotInstalled(getApplicationContext())) || (!OrbotHelper.isOrbotRunning(getApplicationContext()))) {
                 Log.e(TAG, "user selected \"use tor\" but orbot is not installed or not running");
                 return;
             } else {
                 try {
-                    WebkitProxy.setProxy("android.app.Application", getApplicationContext(), Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT);
+                    WebkitProxy.setProxy("android.app.Application", getApplicationContext(), mWebview, Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT);
                 } catch (Exception e) {
                     Log.e(TAG, "user selected \"use tor\" but an exception was thrown while setting the proxy: " + e.getLocalizedMessage());
                     return;
@@ -71,10 +78,6 @@ public class ArchiveLoginActivity extends ActionBarActivity {
             Log.d(TAG, "user selected \"don't use tor\"");
         }
 
-        mWebview = (WebView) findViewById(R.id.webView);
-		mWebview.getSettings().setJavaScriptEnabled(true);
-		mWebview.setVisibility(View.VISIBLE);
-		mWebview.addJavascriptInterface(new JSInterface(), "htmlout");
 
 		mWebview.setWebViewClient(new WebViewClient() {
 			@Override
@@ -113,40 +116,30 @@ public class ArchiveLoginActivity extends ActionBarActivity {
 	}
 	
 	private void parseArchiveCredentials(String rawHtml) {
-		//strip code sections
-		String startCode = "<code>";
-		String endCode = "</code>";	
-		int iStartCode = rawHtml.indexOf(startCode);
-		int iEndCode = rawHtml.lastIndexOf(endCode);
-		
-		//code tags not on page
-		if(iStartCode < 0 || iEndCode < 0) {
-			return;
+
+		try {
+			final Pattern pattern = Pattern.compile("<div class=\"alert alert-danger\">(.+?)</div>");
+			final Matcher matcher = pattern.matcher("rawHtml");
+
+			if (matcher.find())
+				mAccessKey = matcher.group(1).split(":")[1].trim();
+
+			if (matcher.find())
+				mSecretKey = matcher.group(1).split(":")[1].trim();
+
+			//mAccessKey = rawCodes.substring(iFirstColon, iFirstLt);
+			//		mSecretKey = rawCodes.substring(iLastColon, iLastLt);
+
+			if (null != mAccessKey && null != mSecretKey) {
+				mAccessResult = Activity.RESULT_OK;
+			}
 		}
-		
-		String rawCodes = rawHtml.substring(iStartCode, iEndCode);
-		rawCodes = rawCodes.replaceAll("\\s", "");
-		
-		//check to see codes are !present
-		if(rawCodes.contains("GenerateNewKeys")) {
-			return;
+		catch (Exception e)
+		{
+			Log.d("Archive Login","unable to get site S3 creds",e);
 		}
-		
-		//strip codes
-		char colon = ':';
-		String brk = "<br";	
-		int iFirstColon = rawCodes.indexOf(colon) + 1;
-		int iLastColon = rawCodes.lastIndexOf(colon) + 1;
-		int iFirstLt = rawCodes.indexOf(brk);
-		int iLastLt = rawCodes.lastIndexOf(brk);
-		
-		mAccessKey = rawCodes.substring(iFirstColon, iFirstLt);
-		mSecretKey = rawCodes.substring(iLastColon, iLastLt);
-		
-		if(null != mAccessKey && null != mSecretKey) {
-			mAccessResult = Activity.RESULT_OK;
-		}
-		
+
+
 		finish();
 	}
 	
