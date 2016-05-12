@@ -148,6 +148,13 @@ public class ArchiveSiteController extends SiteController {
         if (licenseUrl != null) {
             builder.addHeader("x-archive-meta-licenseurl", licenseUrl);
         }
+
+		/*
+		For uploads which need to be available ASAP in the content
+  management system, an interactive user's upload for example,
+  one can request interactive queue priority:
+		 */
+		builder.addHeader("x-archive-interactive-priority","1");
 		
 		Request request = builder.build();
 
@@ -173,7 +180,7 @@ public class ArchiveSiteController extends SiteController {
 				response = client.newCall(request).execute();
                 Log.d(TAG, "response: " + response + ", body: " + response.body().string());
 				if (!response.isSuccessful()) {
-					jobFailed(null, 4000001, "Archive upload failed: Unexpected Response Code: " + "response: " + response + ", body: " + response.body().string());
+					jobFailed(4000001, "Archive upload failed: Unexpected Response Code: " + "response: " + response.code() + ": message=" + response.message());
 				} else {	
 				    jobSucceeded(response.request().urlString());
 				}

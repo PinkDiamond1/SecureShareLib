@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import io.scal.secureshareui.controller.ArchiveSiteController;
-import io.scal.secureshareui.controller.FacebookSiteController;
 import io.scal.secureshareui.controller.FlickrSiteController;
 import io.scal.secureshareui.controller.SSHSiteController;
 import io.scal.secureshareui.controller.SoundCloudSiteController;
@@ -24,7 +23,6 @@ public class Account {
     private boolean areCredentialsValid;
     public static final String[] CONTROLLER_SITE_NAMES = {
             ArchiveSiteController.SITE_NAME,
-            FacebookSiteController.SITE_NAME,
             YoutubeSiteController.SITE_NAME,
             SoundCloudSiteController.SITE_NAME,
             FlickrSiteController.SITE_NAME,
@@ -32,7 +30,6 @@ public class Account {
     };
     public static final String[] CONTROLLER_SITE_KEYS = {
 	        ArchiveSiteController.SITE_KEY,
-	        FacebookSiteController.SITE_KEY,
             YoutubeSiteController.SITE_KEY,
             SoundCloudSiteController.SITE_KEY,
             FlickrSiteController.SITE_KEY,

@@ -1,7 +1,7 @@
 package io.scal.secureshareui.login;
 
-import info.guardianproject.onionkit.ui.OrbotHelper;
-import info.guardianproject.onionkit.web.WebkitProxy;
+import info.guardianproject.netcipher.proxy.OrbotHelper;
+import info.guardianproject.netcipher.web.WebkitProxy;
 import io.scal.secureshareui.lib.Util;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -37,6 +37,11 @@ public class FlickrWebActivity extends Activity {
             return;
         }
 
+
+        mWebview = new WebView(this);
+        mWebview.getSettings().setJavaScriptEnabled(true);
+        mWebview.setVisibility(View.VISIBLE);
+
         // check for tor settings and set proxy
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         boolean useTor = settings.getBoolean("pusetor", false);
@@ -44,13 +49,12 @@ public class FlickrWebActivity extends Activity {
         if (useTor) {
             Log.d(TAG, "user selected \"use tor\"");
 
-            OrbotHelper orbotHelper = new OrbotHelper(getApplicationContext());
-            if ((!orbotHelper.isOrbotInstalled()) || (!orbotHelper.isOrbotRunning())) {
+            if ((!OrbotHelper.isOrbotInstalled(getApplicationContext())) || (!OrbotHelper.isOrbotRunning(getApplicationContext()))) {
                 Log.e(TAG, "user selected \"use tor\" but orbot is not installed or not running");
                 return;
             } else {
                 try {
-                    WebkitProxy.setProxy("android.app.Application", getApplicationContext(), Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT);
+                    WebkitProxy.setProxy("android.app.Application", getApplicationContext(), mWebview, Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT);
                 } catch (Exception e) {
                     Log.e(TAG, "user selected \"use tor\" but an exception was thrown while setting the proxy: " + e.getLocalizedMessage());
                     return;
@@ -59,10 +63,7 @@ public class FlickrWebActivity extends Activity {
         } else {
             Log.d(TAG, "user selected \"don't use tor\"");
         }
-                
-        mWebview = new WebView(this);
-        mWebview.getSettings().setJavaScriptEnabled(true);
-        mWebview.setVisibility(View.VISIBLE);
+
 
 		setContentView(mWebview);
         
