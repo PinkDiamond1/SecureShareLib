@@ -118,8 +118,8 @@ public class ArchiveLoginActivity extends Activity {
 	private void parseArchiveCredentials(String rawHtml) {
 
 		try {
-			final Pattern pattern = Pattern.compile("<div class=\"alert alert-danger\">(.+?)</div>");
-			final Matcher matcher = pattern.matcher("rawHtml");
+			final Pattern pattern = Pattern.compile("<div class=\"alert alert-danger\">(.+?)<\\/div>");
+			final Matcher matcher = pattern.matcher(rawHtml);
 
 			if (matcher.find())
 				mAccessKey = matcher.group(1).split(":")[1].trim();
