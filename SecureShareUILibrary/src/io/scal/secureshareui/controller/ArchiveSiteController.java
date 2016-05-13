@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.squareup.okhttp.MediaType;
@@ -23,6 +24,8 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+
+import org.w3c.dom.Text;
 
 public class ArchiveSiteController extends SiteController {
 	public static final String SITE_NAME = "Internet Archive";
@@ -48,11 +51,10 @@ public class ArchiveSiteController extends SiteController {
 	}
 
 	@Override
-	public void upload(Account account, HashMap<String, String> valueMap) {
+	public void upload(Account account, HashMap<String, String> valueMap, boolean useTor) {
 		Log.d(TAG, "Upload file: Entering upload");
         
 		String mediaPath = valueMap.get(VALUE_KEY_MEDIA_PATH);
-        boolean useTor = (valueMap.get(VALUE_KEY_USE_TOR).equals("true")) ? true : false;
         String fileName = new File(mediaPath).getName();//mediaPath.substring(mediaPath.lastIndexOf("/")+1, mediaPath.length());
 
 		if (fileName.endsWith("3gpp"))
@@ -62,20 +64,15 @@ public class ArchiveSiteController extends SiteController {
         
 		// TODO this should make sure we arn't accidentally using one of archive.org's metadata fields by accident
         String title = valueMap.get(VALUE_KEY_TITLE);
-        boolean shareTitle = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_TITLE).equals("true")) ? true : false;
         String slug = valueMap.get(VALUE_KEY_SLUG);
 		String tags = valueMap.get(VALUE_KEY_TAGS);
 		//always want to include these two tags
 		//tags += "presssecure,storymaker";
-        boolean shareTags = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_TAGS).equals("true")) ? true : false;
 		String author = valueMap.get(VALUE_KEY_AUTHOR);
-        boolean shareAuthor = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_AUTHOR).equals("true")) ? true : false;
 		String profileUrl = valueMap.get(VALUE_KEY_PROFILE_URL);
 		String locationName = valueMap.get(VALUE_KEY_LOCATION_NAME);
-        boolean shareLocation = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_LOCATION).equals("true")) ? true : false;
 		String body = valueMap.get(VALUE_KEY_BODY);
-        boolean shareDescription = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_DESCRIPTION).equals("true")) ? true : false;  
-        
+
 		File file = new File(mediaPath);
 		if (!file.exists()) {
 			jobFailed(null, 4000473, "Internet Archive upload failed: invalid file");
@@ -94,14 +91,11 @@ public class ArchiveSiteController extends SiteController {
         // FIXME we are putting a random 4 char string in the bucket name for collision avoidance, we might want to do this differently?
 		String urlPath = null;
 		String url = null;
-        if (shareTitle) {
-            String randomString = new Util.RandomString(4).nextString();
-            urlPath = slug + "-" + randomString;
-            url = ARCHIVE_API_ENDPOINT  + "/" + urlPath + "/" + fileName;
-        } else {
-            urlPath = new Util.RandomString(16).nextString(); // FIXME need to use real GUIDs
-            url = ARCHIVE_API_ENDPOINT  + "/" + urlPath + "/" + fileName;
-        }
+
+        String randomString = new Util.RandomString(4).nextString();
+        urlPath = slug + "-" + randomString;
+        url = ARCHIVE_API_ENDPOINT  + "/" + urlPath + "/" + fileName;
+
 		Log.d(TAG, "uploading to url: " + url);
 
 		Request.Builder builder = new Request.Builder()
@@ -114,7 +108,7 @@ public class ArchiveSiteController extends SiteController {
 				.addHeader("x-archive-meta-language", "eng") // FIXME pull meta language from story
 				.addHeader("authorization", "LOW " + account.getUserName() + ":" + account.getCredentials());
 
-		if(shareAuthor && author != null) {
+		if(!TextUtils.isEmpty(author)) {
 			builder.addHeader("x-archive-meta-author", author);		
 			if (profileUrl != null) {
 				builder.addHeader("x-archive-meta-authorurl", profileUrl);
@@ -132,24 +126,24 @@ public class ArchiveSiteController extends SiteController {
             builder.addHeader("x-archive-meta-collection", "opensource_movies");
 		}
 
-		if (shareLocation && locationName != null) {
+		if (!TextUtils.isEmpty(locationName)) {
 			builder.addHeader("x-archive-meta-location", locationName);
 		}
-        
-        if (shareTags && tags != null) {
+
+		if (!TextUtils.isEmpty(tags)) {
             String keywords = tags.replace(',', ';').replaceAll(" ", "");
             builder.addHeader("x-archive-meta-subject", keywords);
         }
-        
-        if (shareDescription && body != null) {
+
+		if (!TextUtils.isEmpty(body)) {
             builder.addHeader("x-archive-meta-description", body);
         }
-        
-        if (shareTitle && title != null) {
+
+		if (!TextUtils.isEmpty(title)) {
             builder.addHeader("x-archive-meta-title", title);
         }
-        
-        if (licenseUrl != null) {
+
+		if (!TextUtils.isEmpty(licenseUrl)) {
             builder.addHeader("x-archive-meta-licenseurl", licenseUrl);
         }
 

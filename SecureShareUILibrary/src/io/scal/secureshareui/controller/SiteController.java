@@ -81,7 +81,7 @@ public abstract class SiteController {
      */
     public abstract void startMetadataActivity(Intent intent);
 
-    public abstract void upload(Account account, HashMap<String, String> valueMap);
+    public abstract void upload(Account account, HashMap<String, String> valueMap, boolean useTor);
 
     public static boolean torCheck(boolean useTor, Context mContext) {
 

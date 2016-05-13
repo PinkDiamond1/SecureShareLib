@@ -21,12 +21,7 @@ import io.scal.secureshareuilibrary.R;
 
 public class ArchiveMetadataActivity extends Activity {
     public static final String TAG = "ArchiveMetadataActivity";
-    
-    public static final String INTENT_EXTRA_SHARE_TITLE = "archive-share-title";
-    public static final String INTENT_EXTRA_SHARE_DESCRIPTION = "archive-share-description";
-    public static final String INTENT_EXTRA_SHARE_AUTHOR = "archive-share-author";
-    public static final String INTENT_EXTRA_SHARE_TAGS = "archive-share-tags";
-    public static final String INTENT_EXTRA_SHARE_LOCATION = "archive-share-location";
+
     public static final String INTENT_EXTRA_LICENSE_URL = "archive-share-licsense-url";
     
     public static final String PREF_FILE_KEY = "archive_metadata_key";
@@ -37,23 +32,13 @@ public class ArchiveMetadataActivity extends Activity {
 		setContentView(R.layout.activity_archive_metadata);
 		Button btnSubmit = (Button) findViewById(R.id.buttonSubmit);
 
-        final Switch title = (Switch) findViewById(R.id.tb_title);
-        final Switch description = (Switch) findViewById(R.id.tb_description);
-        final Switch author = (Switch) findViewById(R.id.tb_author);
-        final Switch tags = (Switch) findViewById(R.id.tb_tags);
-        final Switch location = (Switch) findViewById(R.id.tb_location);
         final RadioGroup rgLicense = (RadioGroup) findViewById(R.id.radioGroupCC);
 
         final Intent i = getIntent();
         Bundle extras = i.getExtras();
         
         //set defaults based on previous selections
-        final SharedPreferences sharedPref = this.getSharedPreferences(PREF_FILE_KEY, Context.MODE_PRIVATE); 
-		title.setChecked(sharedPref.getBoolean(INTENT_EXTRA_SHARE_TITLE, true));
-		description.setChecked(sharedPref.getBoolean(INTENT_EXTRA_SHARE_DESCRIPTION, false));
-		author.setChecked(sharedPref.getBoolean(INTENT_EXTRA_SHARE_AUTHOR, false));
-		tags.setChecked(sharedPref.getBoolean(INTENT_EXTRA_SHARE_TAGS, false));
-		location.setChecked(sharedPref.getBoolean(INTENT_EXTRA_SHARE_LOCATION, false));
+        final SharedPreferences sharedPref = this.getSharedPreferences(PREF_FILE_KEY, Context.MODE_PRIVATE);
 		rgLicense.check(sharedPref.getInt(INTENT_EXTRA_LICENSE_URL, R.id.radioByNcNd));
 		
 		//set up ccLicnse link
@@ -97,23 +82,7 @@ public class ArchiveMetadataActivity extends Activity {
 		            licenseUrl = "http://creativecommons.org/licenses/by-nc-nd/4.0/";
 		        }
 		        
-		        //save defaults for future selections
-		        SharedPreferences.Editor editor = sharedPref.edit();
-		        editor.putBoolean(INTENT_EXTRA_SHARE_TITLE, title.isChecked());
-		        editor.putBoolean(INTENT_EXTRA_SHARE_DESCRIPTION, description.isChecked());
-		        editor.putBoolean(INTENT_EXTRA_SHARE_AUTHOR, author.isChecked());
-		        editor.putBoolean(INTENT_EXTRA_SHARE_TAGS, tags.isChecked());
-		        editor.putBoolean(INTENT_EXTRA_SHARE_LOCATION, location.isChecked());
-		        editor.putInt(INTENT_EXTRA_LICENSE_URL, licenseId);
-		        editor.apply();
-		        
-		        //store data to send with intent
-                i.putExtra(INTENT_EXTRA_SHARE_TITLE, title.isChecked());
-                i.putExtra(INTENT_EXTRA_SHARE_DESCRIPTION, description.isChecked());
-                i.putExtra(INTENT_EXTRA_SHARE_AUTHOR, author.isChecked());
-                i.putExtra(INTENT_EXTRA_SHARE_TAGS, tags.isChecked());
-                i.putExtra(INTENT_EXTRA_SHARE_LOCATION, location.isChecked());
-                i.putExtra(INTENT_EXTRA_LICENSE_URL, licenseUrl);
+
 				setResult(Activity.RESULT_OK, i);
 				
 				finish();
