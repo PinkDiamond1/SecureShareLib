@@ -98,25 +98,9 @@ public abstract class SiteController {
     }   
     
     public static SiteController getSiteController(String site, Context context, Handler handler, String jobId) {
-        if (site.equals(SoundCloudSiteController.SITE_KEY)) {
-            return new SoundCloudSiteController(context, handler, jobId);
-        }
-        else if (site.equals(YoutubeSiteController.SITE_KEY)) {
-            return new YoutubeSiteController(context, handler, jobId);
-        }
-        else if (site.equals(FlickrSiteController.SITE_KEY)) {
-            return new FlickrSiteController(context, handler, jobId);
-        }
-        else if (site.equals(SSHSiteController.SITE_KEY)) {
-            return new SSHSiteController(context, handler, jobId);
-        }
-        else if (site.equals(ArchiveSiteController.SITE_KEY)) {
+       if (site.equals(ArchiveSiteController.SITE_KEY)) {
             return new ArchiveSiteController(context, handler, jobId);
         }
-        else if (site.equals(S3SiteController.SITE_KEY)) {
-            return new S3SiteController(context, handler, jobId);
-        }
-
         return null;
     }
     
@@ -195,39 +179,9 @@ public abstract class SiteController {
     }
     
     public static int getAccountIcon(String site, boolean isConnected, boolean areCredentialsValid) {
-        if (site.equals(YoutubeSiteController.SITE_KEY)) {
-        	if (!isConnected) {
-        		return R.drawable.ic_context_youtube;
-        	}
-        	return areCredentialsValid ? R.drawable.ic_context_youtube_on : R.drawable.ic_context_youtube_error;
-        }
-        else if (site.equals(SoundCloudSiteController.SITE_KEY)) {
-        	if (!isConnected) {
-        		return R.drawable.ic_context_soundcloud;
-        	}
-        	return areCredentialsValid ? R.drawable.ic_context_soundcloud_on : R.drawable.ic_context_soundcloud_error;
-        }
-        else if (site.equals(FlickrSiteController.SITE_KEY)) {
-        	if (!isConnected) {
-        		return R.drawable.ic_context_flickr;
-        	}
-        	return areCredentialsValid ? R.drawable.ic_context_flickr_on : R.drawable.ic_context_flickr_error;
-        }
-        else if (site.equals(SSHSiteController.SITE_KEY)) {
-        	if (!isConnected) {
-        		return R.drawable.ic_context_server;
-        	}
-        	return areCredentialsValid ? R.drawable.ic_context_server_on : R.drawable.ic_context_server_error;
-        }
-        else if (site.equals(ArchiveSiteController.SITE_KEY)) {
+        if (site.equals(ArchiveSiteController.SITE_KEY)) {
             if (!isConnected) {
                 return R.drawable.ic_context_iarchive;
-            }
-            return areCredentialsValid ? R.drawable.ic_context_iarchive_on : R.drawable.ic_context_iarchive_error;
-        }
-        else if (site.equals(S3SiteController.SITE_KEY)) {
-            if (!isConnected) {
-                return R.drawable.ic_context_server; // FIXME we need a storymaker server icon
             }
             return areCredentialsValid ? R.drawable.ic_context_iarchive_on : R.drawable.ic_context_iarchive_error;
         }

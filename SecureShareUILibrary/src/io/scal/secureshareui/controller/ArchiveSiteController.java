@@ -53,7 +53,11 @@ public class ArchiveSiteController extends SiteController {
         
 		String mediaPath = valueMap.get(VALUE_KEY_MEDIA_PATH);
         boolean useTor = (valueMap.get(VALUE_KEY_USE_TOR).equals("true")) ? true : false;
-        String fileName = mediaPath.substring(mediaPath.lastIndexOf("/")+1, mediaPath.length()); 
+        String fileName = new File(mediaPath).getName();//mediaPath.substring(mediaPath.lastIndexOf("/")+1, mediaPath.length());
+
+		if (fileName.endsWith("3gpp"))
+			fileName = fileName.replace("3gpp","3gp");//archive.org only likes 3gp
+
         String licenseUrl = valueMap.get(VALUE_KEY_LICENSE_URL);
         
 		// TODO this should make sure we arn't accidentally using one of archive.org's metadata fields by accident
@@ -62,7 +66,7 @@ public class ArchiveSiteController extends SiteController {
         String slug = valueMap.get(VALUE_KEY_SLUG);
 		String tags = valueMap.get(VALUE_KEY_TAGS);
 		//always want to include these two tags
-		tags += "presssecure,storymaker";
+		//tags += "presssecure,storymaker";
         boolean shareTags = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_TAGS).equals("true")) ? true : false;
 		String author = valueMap.get(VALUE_KEY_AUTHOR);
         boolean shareAuthor = (valueMap.get(ArchiveMetadataActivity.INTENT_EXTRA_SHARE_AUTHOR).equals("true")) ? true : false;
