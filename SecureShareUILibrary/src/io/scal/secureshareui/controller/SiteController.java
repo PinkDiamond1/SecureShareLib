@@ -72,6 +72,7 @@ public abstract class SiteController {
         mJobId = jobId;
     }
 
+    public abstract void startRegistration (Account account);
     public abstract void startAuthentication(Account account);
     
     /**

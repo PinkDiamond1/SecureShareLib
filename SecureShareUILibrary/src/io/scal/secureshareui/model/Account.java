@@ -15,8 +15,8 @@ public class Account {
     private String userName;
     private String credentials;
     private String data;
-    private boolean isConnected;
-    private boolean areCredentialsValid;
+    private boolean authenticated;
+
     public static final String[] CONTROLLER_SITE_NAMES = {
             ArchiveSiteController.SITE_NAME,
 
@@ -25,18 +25,6 @@ public class Account {
             ArchiveSiteController.SITE_KEY
     };
 
-    public Account(int id, String name, String site, String userName, String credentials, String data, boolean isConnected, boolean areCredentialsValid) {
-        this.id = id;
-        this.setName(name);
-        this.setSite(site);
-        this.setUserName(userName);
-        this.setCredentials(credentials);
-        this.setData(data);
-        this.setIsConnected(isConnected);
-        this.setAreCredentialsValid(areCredentialsValid);
-    }
-
-    // FIXME move this into a clearly named static method, this is just confusing
     public Account(Context context, String prefsName) {
         if (Util.isEmpty(prefsName)) {
             prefsName = "secureshare_auth";
@@ -47,7 +35,7 @@ public class Account {
         id = settings.getInt("id", 0);
         name = settings.getString("name", null);
         credentials = settings.getString("credentials", null);
-        isConnected = settings.getBoolean("is_connected", false);
+        authenticated = settings.getBoolean("is_authenticated", false);
         data = settings.getString("data", null);
         userName = settings.getString("user_name", null);
     }
@@ -61,7 +49,7 @@ public class Account {
         editor.putInt("id", id);
         editor.putString("name", name);
         editor.putString("credentials", credentials);
-        editor.putBoolean("is_connected", isConnected);
+        editor.putBoolean("is_authenticated", authenticated);
         editor.putString("data", data);
         editor.putString("user_name", userName);
         editor.commit();
@@ -126,19 +114,12 @@ public class Account {
         this.data = data;
     }
 
-    public boolean getIsConnected() {
-        return isConnected;
+    public boolean isAuthenticated() {
+        return authenticated;
     }
 
-    public void setIsConnected(boolean isConnected) {
-        this.isConnected = isConnected;
+    public void setAuthenticated(boolean authenticated) {
+        this.authenticated = authenticated;
     }
 
-    public boolean getAreCredentialsValid() {
-        return areCredentialsValid;
-    }
-
-    public void setAreCredentialsValid(boolean areCredentialsValid) {
-        this.areCredentialsValid = areCredentialsValid;
-    }
 }

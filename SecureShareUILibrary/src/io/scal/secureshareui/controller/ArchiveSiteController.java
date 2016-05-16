@@ -43,6 +43,15 @@ public class ArchiveSiteController extends SiteController {
 	}
 
 	@Override
+	public void startRegistration(Account account) {
+		Intent intent = new Intent(mContext, ArchiveLoginActivity.class);
+		intent.putExtra("register",true);
+		intent.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, account.getCredentials());
+		((Activity) mContext).startActivityForResult(intent, SiteController.CONTROLLER_REQUEST_CODE);
+		// FIXME not a safe cast, context might be a service
+	}
+
+	@Override
 	public void startAuthentication(Account account) {
 		Intent intent = new Intent(mContext, ArchiveLoginActivity.class);
 		intent.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, account.getCredentials());

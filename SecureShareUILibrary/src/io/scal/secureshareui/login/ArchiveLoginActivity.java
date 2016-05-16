@@ -44,7 +44,11 @@ public class ArchiveLoginActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_archive_login);
-		login(ARCHIVE_LOGIN_URL);
+
+		if (getIntent().getBooleanExtra("register",false))
+			login(ARCHIVE_CREATE_ACCOUNT_URL);
+		else
+			login(ARCHIVE_LOGIN_URL);
 	}
 
 	@SuppressLint({ "SetJavaScriptEnabled" })
@@ -106,8 +110,8 @@ public class ArchiveLoginActivity extends Activity {
 		            mWebview.loadUrl(jsCheckBox + jsBtnClick + jsSourceDump); 
 				} else if(url.equals(ARCHIVE_CREATE_ACCOUNT_URL)) {
 					sIsLoginScren = false;
-					String jsSourceDump = "javascript:window.htmlout.processHTML('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');";
-					mWebview.loadUrl(jsSourceDump);
+					//String jsSourceDump = "javascript:window.htmlout.processHTML('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');";
+					//mWebview.loadUrl(jsSourceDump);
 				}			
 			}
 		});
