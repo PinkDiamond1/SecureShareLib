@@ -1,6 +1,5 @@
 package io.scal.secureshareui.controller;
 
-import io.scal.secureshareui.lib.ArchiveMetadataActivity;
 import io.scal.secureshareui.lib.Util;
 import io.scal.secureshareui.login.ArchiveLoginActivity;
 import io.scal.secureshareui.model.Account;
