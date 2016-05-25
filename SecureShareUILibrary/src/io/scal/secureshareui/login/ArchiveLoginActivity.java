@@ -45,41 +45,35 @@ public class ArchiveLoginActivity extends Activity {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_archive_login);
 
-		if (getIntent().getBooleanExtra("register",false))
-			login(ARCHIVE_CREATE_ACCOUNT_URL);
+		boolean doRegister = getIntent().getBooleanExtra("register",false);
+		boolean useTor = getIntent().getBooleanExtra("useTor",true);
+
+		if (doRegister)
+			login(ARCHIVE_CREATE_ACCOUNT_URL,useTor);
 		else
-			login(ARCHIVE_LOGIN_URL);
+			login(ARCHIVE_LOGIN_URL,useTor);
 	}
 
 	@SuppressLint({ "SetJavaScriptEnabled" })
-	private void login(String currentURL) {
-
-        // check for tor settings and set proxy
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        boolean useTor = settings.getBoolean("pusetor", false);
-
+	private void login(String currentURL, boolean useTor) {
 
 		mWebview = (WebView) findViewById(R.id.webView);
 		mWebview.getSettings().setJavaScriptEnabled(true);
 		mWebview.setVisibility(View.VISIBLE);
 		mWebview.addJavascriptInterface(new JSInterface(), "htmlout");
 
-        if (useTor) {
-            Log.d(TAG, "user selected \"use tor\"");
+        //if Orbot is installed and running, then use it!
+        if (useTor
+                && OrbotHelper.isOrbotInstalled(getApplicationContext())
+                && OrbotHelper.isOrbotRunning(getApplicationContext())) {
 
-            if ((!OrbotHelper.isOrbotInstalled(getApplicationContext())) || (!OrbotHelper.isOrbotRunning(getApplicationContext()))) {
-                Log.e(TAG, "user selected \"use tor\" but orbot is not installed or not running");
-                return;
-            } else {
                 try {
                     WebkitProxy.setProxy("android.app.Application", getApplicationContext(), mWebview, Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT);
                 } catch (Exception e) {
                     Log.e(TAG, "user selected \"use tor\" but an exception was thrown while setting the proxy: " + e.getLocalizedMessage());
                     return;
                 }
-            }
-        } else {
-            Log.d(TAG, "user selected \"don't use tor\"");
+
         }
 
 
