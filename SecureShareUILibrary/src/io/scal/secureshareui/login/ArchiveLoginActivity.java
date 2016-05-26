@@ -1,6 +1,6 @@
 package io.scal.secureshareui.login;
 
-import info.guardianproject.netcipher.proxy.OrbotHelper;
+
 import info.guardianproject.netcipher.web.WebkitProxy;
 import io.scal.secureshareui.controller.SiteController;
 import io.scal.secureshareui.lib.Util;
@@ -12,6 +12,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -19,6 +22,7 @@ import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,8 +40,7 @@ public class ArchiveLoginActivity extends Activity {
 	private int mAccessResult = Activity.RESULT_CANCELED;
 	private String mAccessKey = null;
     private String mSecretKey = null;
-    
-    // FIXME security: we need to override the webviews cache, cookies, formdata cache to store only in sqlcipher/iocipher, currently it hits disk and then we clear it
+
     private WebView mWebview;
     
 	@Override
@@ -46,16 +49,31 @@ public class ArchiveLoginActivity extends Activity {
         setContentView(R.layout.activity_archive_login);
 
 		boolean doRegister = getIntent().getBooleanExtra("register",false);
-		boolean useTor = getIntent().getBooleanExtra("useTor",true);
+		boolean useTor = getIntent().getBooleanExtra("useTor",false);
+
+		String proxyHost = null;
+		int proxyPort = -1;
+
+		if (useTor)
+		{
+
+            if (getIntent().hasExtra("proxyHost"))
+			    proxyHost = getIntent().getStringExtra("proxyHost");
+            else
+                proxyHost = Util.ORBOT_HOST;
+
+            proxyPort = getIntent().getIntExtra("proxyPort",Util.ORBOT_HTTP_PORT);
+
+		}
 
 		if (doRegister)
-			login(ARCHIVE_CREATE_ACCOUNT_URL,useTor);
+			login(ARCHIVE_CREATE_ACCOUNT_URL,proxyHost,proxyPort);
 		else
-			login(ARCHIVE_LOGIN_URL,useTor);
+			login(ARCHIVE_LOGIN_URL,proxyHost,proxyPort);
 	}
 
 	@SuppressLint({ "SetJavaScriptEnabled" })
-	private void login(String currentURL, boolean useTor) {
+	private void login(String currentURL, String proxyHost, int proxyPort) {
 
 		mWebview = (WebView) findViewById(R.id.webView);
 		mWebview.getSettings().setJavaScriptEnabled(true);
@@ -63,12 +81,10 @@ public class ArchiveLoginActivity extends Activity {
 		mWebview.addJavascriptInterface(new JSInterface(), "htmlout");
 
         //if Orbot is installed and running, then use it!
-        if (useTor
-                && OrbotHelper.isOrbotInstalled(getApplicationContext())
-                && OrbotHelper.isOrbotRunning(getApplicationContext())) {
+        if (proxyHost != null) {
 
                 try {
-                    WebkitProxy.setProxy("android.app.Application", getApplicationContext(), mWebview, Util.ORBOT_HOST, Util.ORBOT_HTTP_PORT);
+                    WebkitProxy.setProxy("android.app.Application", getApplicationContext(),mWebview,proxyHost,proxyPort) ;
                 } catch (Exception e) {
                     Log.e(TAG, "user selected \"use tor\" but an exception was thrown while setting the proxy: " + e.getLocalizedMessage());
                     return;

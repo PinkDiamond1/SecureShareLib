@@ -58,6 +58,8 @@ public abstract class SiteController {
 
     private static final String TAG = "SiteController";
 
+    boolean mUseTor = false;
+
     public interface OnEventListener {
         public void onSuccess(Account publishAccount);
 
@@ -84,20 +86,6 @@ public abstract class SiteController {
 
     public abstract void upload(Account account, HashMap<String, String> valueMap, boolean useTor);
 
-    public static boolean torCheck(boolean useTor, Context mContext) {
-
-        if(useTor && OrbotHelper.isOrbotRunning(mContext))
-        {    
-            Log.d(TAG, "use tor");
-            return true;
-        }
-        else
-        {            
-            Log.d(TAG, "don't use tor");
-            return false;
-        }
-    }   
-    
     public static SiteController getSiteController(String site, Context context, Handler handler, String jobId) {
        if (site.equals(ArchiveSiteController.SITE_KEY)) {
             return new ArchiveSiteController(context, handler, jobId);
@@ -188,5 +176,10 @@ public abstract class SiteController {
         }
 
         return R.drawable.ic_launcher;
+    }
+
+    public void setUseTor (boolean useTor)
+    {
+        mUseTor = useTor;
     }
 }

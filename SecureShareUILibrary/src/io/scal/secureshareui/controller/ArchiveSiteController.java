@@ -54,6 +54,7 @@ public class ArchiveSiteController extends SiteController {
 	public void startAuthentication(Account account) {
 		Intent intent = new Intent(mContext, ArchiveLoginActivity.class);
 		intent.putExtra(SiteController.EXTRAS_KEY_CREDENTIALS, account.getCredentials());
+		intent.putExtra("useTor",mUseTor);
 		((Activity) mContext).startActivityForResult(intent, SiteController.CONTROLLER_REQUEST_CODE);
 		// FIXME not a safe cast, context might be a service
 	}
@@ -91,7 +92,7 @@ public class ArchiveSiteController extends SiteController {
 
 		OkHttpClient client = new OkHttpClient();
 
-		if (super.torCheck(useTor, super.mContext)) {
+		if (useTor) {
 			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ORBOT_HOST, ORBOT_HTTP_PORT));
 			client.setProxy(proxy);
 		}
