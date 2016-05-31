@@ -112,17 +112,22 @@ public class ArchiveLoginActivity extends Activity {
 				//if credentials page, inject JS for scraping
 				if (url.equals(ARCHIVE_CREDENTIALS_URL)) {
 					sIsLoginScren = true;
-					
-		            String jsCheckBox= "javascript:(function(){document.getElementById('confirm').checked=true;})();";
-		            String jsBtnClick = "javascript:(function(){$('[value=\"Generate New Keys\"]').click();})();";
-		            String jsSourceDump = "javascript:window.htmlout.processHTML('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');";
-		            
-		            mWebview.loadUrl(jsCheckBox + jsBtnClick + jsSourceDump); 
+
+                    StringBuffer jsCmd = new StringBuffer();
+
+		            jsCmd.append("javascript:(function(){");
+                    jsCmd.append("window.htmlout.processHTML('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
+                    jsCmd.append("document.getElementById('confirm').checked=true;");
+                    jsCmd.append("document.getElementById('generateNewKeys').click();");
+                    jsCmd.append("})();");
+
+		            mWebview.loadUrl(jsCmd.toString());
+
 				} else if(url.equals(ARCHIVE_CREATE_ACCOUNT_URL)) {
 					sIsLoginScren = false;
-					//String jsSourceDump = "javascript:window.htmlout.processHTML('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');";
+					//String jsSourceDump = "javascript:";
 					//mWebview.loadUrl(jsSourceDump);
-				}			
+				}
 			}
 		});
 
@@ -141,12 +146,6 @@ public class ArchiveLoginActivity extends Activity {
 			if (matcher.find())
 				mSecretKey = matcher.group(1).split(":")[1].trim();
 
-			//mAccessKey = rawCodes.substring(iFirstColon, iFirstLt);
-			//		mSecretKey = rawCodes.substring(iLastColon, iLastLt);
-
-			if (null != mAccessKey && null != mSecretKey) {
-				mAccessResult = Activity.RESULT_OK;
-			}
 		}
 		catch (Exception e)
 		{
@@ -154,7 +153,6 @@ public class ArchiveLoginActivity extends Activity {
 		}
 
 
-		finish();
 	}
 	
 	class JSInterface {
@@ -165,7 +163,16 @@ public class ArchiveLoginActivity extends Activity {
 			}
 			
 			if(sIsLoginScren) {
+
 				parseArchiveCredentials(html);
+
+				if (null != mAccessKey && null != mSecretKey) {
+					mAccessResult = Activity.RESULT_OK;
+
+				}
+
+                finish();
+
 			} else if (html.contains("Verification Email Sent")) {
 				showAccountCreatedDialog(new DialogInterface.OnClickListener() {
 					@Override
