@@ -27,6 +27,7 @@ import com.squareup.okhttp.Response;
 import org.w3c.dom.Text;
 
 public class ArchiveSiteController extends SiteController {
+
 	public static final String SITE_NAME = "Internet Archive";
 	public static final String SITE_KEY = "archive";
 	private static final String TAG = "ArchiveSiteController";
@@ -34,7 +35,7 @@ public class ArchiveSiteController extends SiteController {
         METADATA_REQUEST_CODE = 1022783271;
     }
 
-	private static final String ARCHIVE_API_ENDPOINT = "http://s3.us.archive.org";
+	private static final String ARCHIVE_API_ENDPOINT = "https://s3.us.archive.org";
 	public static final MediaType MEDIA_TYPE = MediaType.parse("");
 
 	public ArchiveSiteController(Context context, Handler handler, String jobId) {
