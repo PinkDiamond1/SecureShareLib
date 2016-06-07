@@ -166,12 +166,11 @@ public class ArchiveLoginActivity extends Activity {
 
 				parseArchiveCredentials(html);
 
-				if (null != mAccessKey && null != mSecretKey) {
+				if (mAccessKey != null && mSecretKey != null) {
 					mAccessResult = Activity.RESULT_OK;
-
+					finish();
 				}
 
-                finish();
 
 			} else if (html.contains("Verification Email Sent")) {
 				showAccountCreatedDialog(new DialogInterface.OnClickListener() {
